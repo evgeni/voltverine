@@ -5,3 +5,4 @@ from .logindsessions import LogindSessions
 from .logindinhibitors import LogindInhibitors
 from .processes import Processes
 from .processeswithconnections import ProcessesWithConnections
+from .noshutdownfile import NoShutdownFile
