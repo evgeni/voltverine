@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class ProcessesWithConnections(BasePlugin):
 
-    def __init__(self, processes, *args, **kwargs):
+    def __init__(self, processes=[], *args, **kwargs):
         super(ProcessesWithConnections, self).__init__(args, kwargs)
         self._processes = processes
 
