@@ -6,3 +6,4 @@ from .logindinhibitors import LogindInhibitors
 from .systemdservices import SystemdServices
 from .processes import Processes
 from .processeswithconnections import ProcessesWithConnections
+from .noshutdownfile import NoShutdownFile
