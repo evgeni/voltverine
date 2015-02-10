@@ -46,7 +46,7 @@ class VoltverineApp(object):
             self._run()
 
     def _run(self):
-        results = {voltverine.plugins.OK: 0, voltverine.plugins.DUNNO: 0}
+        results = {voltverine.plugins.NOT_OK: 0, voltverine.plugins.OK: 0, voltverine.plugins.DUNNO: 0}
         for plugin in self._plugins:
             logger.debug("Trying %s", plugin[0])
             pobj = plugin[1]()
