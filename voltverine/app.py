@@ -2,6 +2,7 @@ import argparse
 import inspect
 import logging
 import voltverine.plugins
+import voltverine.actions
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -17,6 +18,7 @@ class VoltverineApp(object):
             # get the "root" logger and set it to DEBUG
             logging.getLogger().setLevel(logging.DEBUG)
         self._find_plugins()
+        self._action = voltverine.actions.LogindPoweroff()
 
     def _parse_args(self):
         parser = argparse.ArgumentParser(description='maybe shutdown the machine')
@@ -44,7 +46,19 @@ class VoltverineApp(object):
             self._run()
 
     def _run(self):
+        results = {voltverine.plugins.OK: 0, voltverine.plugins.DUNNO: 0}
         for plugin in self._plugins:
             logger.debug("Trying %s", plugin[0])
             pobj = plugin[1]()
-            logger.info(pobj.analyze())
+            (result, info) = pobj.analyze()
+            if result is voltverine.plugins.NOT_OK:
+                logger.info("%s decided we cannot shutdown now, skipping the other plugins", plugin[0])
+                return
+            logger.info((result, info))
+            results[result] += 1
+        if results[voltverine.plugins.OK] > 0:
+            logger.debug("executing action")
+            if not self.args.dry_run:
+                self._action.execute()
+        else:
+            logger.info("nobody said it is ok to execute an action")
