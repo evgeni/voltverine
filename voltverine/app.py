@@ -27,6 +27,7 @@ class VoltverineApp(object):
         parser.add_argument('-n', '--dry-run', action='store_true')
         parser.add_argument('-v', '--verbose', action='store_true')
         parser.add_argument('-c', '--config', action='store')
+        parser.add_argument('-a', '--all-plugins', action='store_true')
         parser.add_argument('--version', action='version', version='%(prog)s 0.1.0')
         self.args = parser.parse_args()
 
@@ -51,12 +52,14 @@ class VoltverineApp(object):
             logger.debug("Trying %s", plugin[0])
             pobj = plugin[1]()
             (result, info) = pobj.analyze()
-            if result is voltverine.plugins.NOT_OK:
+            if result is voltverine.plugins.NOT_OK and not self.args.all_plugins:
                 logger.info("%s decided we cannot shutdown now, skipping the other plugins", plugin[0])
                 return
             logger.info((result, info))
             results[result] += 1
-        if results[voltverine.plugins.OK] > 0:
+        if results[voltverine.plugins.NOT_OK] > 0:
+            logger.debug("plugins decided not to take action")
+        elif results[voltverine.plugins.OK] > 0:
             logger.debug("executing action")
             if not self.args.dry_run:
                 self._action.execute()
