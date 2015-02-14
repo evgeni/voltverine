@@ -1,1 +1,1 @@
-dbusmock
+python-dbusmock
