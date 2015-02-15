@@ -63,7 +63,12 @@ class VoltverineApp(object):
                                            lambda x: inspect.isclass(x) and
                                            x.__name__ not in _PLUGIN_BLACKLIST)
         if self.config['plugins']:
-            self._plugins = [p for p in found_plugins if p[0] in self.config['plugins'].keys()]
+            if isinstance(self.config['plugins'], dict):
+                self._plugins = [p for p in found_plugins if p[0] in self.config['plugins'].keys()]
+            elif isinstance(self.config['plugins'], list):
+                self._plugins = [p for p in found_plugins if p[0] in self.config['plugins']]
+            else:
+                self._plugins = found_plugins
         else:
             self._plugins = found_plugins
 
