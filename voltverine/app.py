@@ -23,7 +23,7 @@ class VoltverineApp(object):
             logging.getLogger().setLevel(logging.DEBUG)
         self._parse_config()
         self._find_plugins()
-        self._action = voltverine.actions.LogindPoweroff()
+        self._find_action()
 
     def _parse_args(self):
         parser = argparse.ArgumentParser(description='maybe shutdown the machine')
@@ -62,6 +62,13 @@ class VoltverineApp(object):
         self._plugins = inspect.getmembers(voltverine.plugins,
                                            lambda x: inspect.isclass(x) and
                                            x.__name__ not in _PLUGIN_BLACKLIST)
+
+    def _find_action(self):
+        if hasattr(voltverine.actions, self.config['action']):
+            self._action = getattr(voltverine.actions, self.config['action'])()
+        else:
+            logger.error("Could not find defined action %s, exiting", self.config['action'])
+            sys.exit(1)
 
     def run(self):
         if self.args.daemonize:
