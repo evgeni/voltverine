@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 _PLUGIN_BLACKLIST = ['BasePlugin', 'BaseDbusPlugin']
-_DEFAULT_CONFIG = {'action': 'LogindPoweroff'}
+_DEFAULT_CONFIG = {'action': 'LogindPoweroff', 'plugins': []}
 
 
 class VoltverineApp(object):
@@ -59,9 +59,13 @@ class VoltverineApp(object):
         self.config.update(_args_config)
 
     def _find_plugins(self):
-        self._plugins = inspect.getmembers(voltverine.plugins,
+        found_plugins = inspect.getmembers(voltverine.plugins,
                                            lambda x: inspect.isclass(x) and
                                            x.__name__ not in _PLUGIN_BLACKLIST)
+        if self.config['plugins']:
+            self._plugins = [p for p in found_plugins if p[0] in self.config['plugins'].keys()]
+        else:
+            self._plugins = found_plugins
 
     def _find_action(self):
         if hasattr(voltverine.actions, self.config['action']):
