@@ -93,7 +93,10 @@ class VoltverineApp(object):
         results = {voltverine.plugins.NOT_OK: 0, voltverine.plugins.OK: 0, voltverine.plugins.DUNNO: 0}
         for plugin in self._plugins:
             logger.debug("Trying %s", plugin[0])
-            pobj = plugin[1]()
+            if (isinstance(self.config['plugins'], dict) and self.config['plugins'].has_key(plugin[0]) and self.config['plugins'][plugin[0]]):
+                pobj = plugin[1](**self.config['plugins'][plugin[0]])
+            else:
+                pobj = plugin[1]()
             (result, info) = pobj.analyze()
             if result is voltverine.plugins.NOT_OK and not self.args.all_plugins:
                 logger.info("%s decided we cannot shutdown now, skipping the other plugins", plugin[0])
