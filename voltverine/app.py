@@ -1,6 +1,9 @@
 import argparse
 import inspect
 import logging
+import os
+import sys
+import yaml
 import voltverine.plugins
 import voltverine.actions
 
@@ -8,6 +11,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 _PLUGIN_BLACKLIST = ['BasePlugin', 'BaseDbusPlugin']
+_DEFAULT_CONFIG = {'action': 'LogindPoweroff'}
 
 
 class VoltverineApp(object):
@@ -17,6 +21,7 @@ class VoltverineApp(object):
         if self.args.verbose:
             # get the "root" logger and set it to DEBUG
             logging.getLogger().setLevel(logging.DEBUG)
+        self._parse_config()
         self._find_plugins()
         self._action = voltverine.actions.LogindPoweroff()
 
@@ -30,6 +35,28 @@ class VoltverineApp(object):
         parser.add_argument('-a', '--all-plugins', action='store_true')
         parser.add_argument('--version', action='version', version='%(prog)s 0.1.0')
         self.args = parser.parse_args()
+
+    def _parse_config(self):
+        self.config = _DEFAULT_CONFIG
+        if not self.args.config:
+            for f in ['voltverine.conf', os.path.expanduser('~/.config/voltverine/voltverine.conf'), '/etc/voltverine/voltverine.conf']:
+                if os.path.isfile(f) and os.access(f, os.R_OK):
+                    self.args.config = f
+                    break
+        elif not (os.path.isfile(self.args.config) and os.access(self.args.config, os.R_OK)):
+            logger.error("The configuration file is not readable, exiting.")
+            sys.exit(1)
+        if self.args.config:
+            with open(self.args.config) as configfile:
+                self.config.update(yaml.safe_load(configfile))
+        _args_config = {
+            'daemonize': self.args.daemonize,
+            'foreground': self.args.foreground,
+            'dry_run': self.args.dry_run,
+            'verbose': self.args.verbose,
+            'all_plugins': self.args.all_plugins,
+            }
+        self.config.update(_args_config)
 
     def _find_plugins(self):
         self._plugins = inspect.getmembers(voltverine.plugins,
