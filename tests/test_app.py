@@ -38,7 +38,7 @@ class TestApp(dbusmock.DBusTestCase):
         self.assertRegex(output, 'voltverine')
         self.assertEquals(cm.exception.code, 0)
 
-    def test_config(self):
+    def test_config_plugins_dict(self):
         with tempfile.NamedTemporaryFile() as cfgf:
             cfgf.write("""---
 plugins:
@@ -51,6 +51,20 @@ plugins:
             self.assertEquals(len(v._plugins), 1)
             self.assertEquals(v._plugins[0][0], 'NoShutdownFile')
             self.assertEquals(v.config['plugins']['NoShutdownFile']['filename'], '/some/path')
+
+    def test_config_plugins_list(self):
+        with tempfile.NamedTemporaryFile() as cfgf:
+            cfgf.write("""---
+plugins:
+  - LogindSessions
+  - LogindInhibitors
+""")
+            cfgf.flush()
+            sys.argv = ['voltverine', '-c', cfgf.name]
+            v = voltverine.app.VoltverineApp()
+            self.assertEquals(len(v._plugins), 2)
+            self.assertTrue('LogindSessions' in v.config['plugins'])
+            self.assertTrue('LogindInhibitors' in v.config['plugins'])
 
 if __name__ == '__main__':
     # avoid writing to stderr
