@@ -2,6 +2,7 @@ import unittest
 import sys
 import dbusmock
 import subprocess
+import tempfile
 
 import voltverine.app
 
@@ -37,6 +38,19 @@ class TestApp(dbusmock.DBusTestCase):
         self.assertRegex(output, 'voltverine')
         self.assertEquals(cm.exception.code, 0)
 
+    def test_config(self):
+        with tempfile.NamedTemporaryFile() as cfgf:
+            cfgf.write("""---
+plugins:
+  NoShutdownFile:
+    filename: /some/path
+""")
+            cfgf.flush()
+            sys.argv = ['voltverine', '-c', cfgf.name]
+            v = voltverine.app.VoltverineApp()
+            self.assertEquals(len(v._plugins), 1)
+            self.assertEquals(v._plugins[0][0], 'NoShutdownFile')
+            self.assertEquals(v.config['plugins']['NoShutdownFile']['filename'], '/some/path')
 
 if __name__ == '__main__':
     # avoid writing to stderr
