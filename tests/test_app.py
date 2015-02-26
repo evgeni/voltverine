@@ -25,6 +25,8 @@ class TestApp(dbusmock.DBusTestCase):
         v = voltverine.app.VoltverineApp()
         output = sys.stdout.getvalue().strip() # because stdout is an StringIO instance
         self.assertEquals(output, '')
+        self.assertTrue(v._plugins)
+        self.assertTrue(v._action.__class__.__name__ == 'LogindPoweroff')
 
     def test_help(self):
         with self.assertRaises(SystemExit) as cm:
