@@ -1,6 +1,5 @@
 import unittest
 import sys
-import dbus
 import dbusmock
 import subprocess
 
