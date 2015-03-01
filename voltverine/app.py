@@ -48,7 +48,9 @@ class VoltverineApp(object):
             sys.exit(1)
         if self.args.config:
             with open(self.args.config) as configfile:
-                self.config.update(yaml.safe_load(configfile))
+                _yaml_config = yaml.safe_load(configfile)
+                if _yaml_config:
+                    self.config.update(_yaml_config)
         _args_config = {
             'daemonize': self.args.daemonize,
             'foreground': self.args.foreground,
