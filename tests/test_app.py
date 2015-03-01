@@ -66,6 +66,19 @@ plugins:
             self.assertTrue('LogindSessions' in v.config['plugins'])
             self.assertTrue('LogindInhibitors' in v.config['plugins'])
 
+    def test_config_custom_plugins(self):
+        with tempfile.NamedTemporaryFile() as cfgf:
+            cfgf.write(b"""---
+plugins:
+  - tests.customplugin.CustomPlugin
+""")
+            cfgf.flush()
+            sys.argv = ['voltverine', '-c', cfgf.name]
+            v = voltverine.app.VoltverineApp()
+            self.assertEquals(len(v._plugins), 1)
+            self.assertTrue('tests.customplugin.CustomPlugin' in v.config['plugins'])
+            self.assertEquals(v._plugins[0][1].__name__, 'CustomPlugin')
+
 if __name__ == '__main__':
     # avoid writing to stderr
     unittest.main(testRunner=unittest.TextTestRunner(stream=sys.stdout, verbosity=2))
