@@ -8,3 +8,6 @@ script: nosetests
 install:
   - pip install -r requirements.txt
   - pip install -r requirements-tests.txt
+addons:
+  apt_packages:
+  - python-dbus
