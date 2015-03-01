@@ -40,7 +40,7 @@ class TestApp(dbusmock.DBusTestCase):
 
     def test_config_plugins_dict(self):
         with tempfile.NamedTemporaryFile() as cfgf:
-            cfgf.write("""---
+            cfgf.write(b"""---
 plugins:
   NoShutdownFile:
     filename: /some/path
@@ -54,7 +54,7 @@ plugins:
 
     def test_config_plugins_list(self):
         with tempfile.NamedTemporaryFile() as cfgf:
-            cfgf.write("""---
+            cfgf.write(b"""---
 plugins:
   - LogindSessions
   - LogindInhibitors
