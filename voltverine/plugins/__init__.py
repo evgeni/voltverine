@@ -7,3 +7,4 @@ from .systemdservices import SystemdServices
 from .processes import Processes
 from .processeswithconnections import ProcessesWithConnections
 from .noshutdownfile import NoShutdownFile
+from .command import Command
