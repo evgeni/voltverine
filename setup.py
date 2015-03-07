@@ -9,7 +9,7 @@ setup(
     author_email="evgeni@golov.de",
     url="http://github.com/evgeni/voltverine",
     license="MIT",
-    packages=['voltverine'],
+    packages=['voltverine', 'voltverine.plugins', 'voltverine.actions'],
     scripts=['voltverine.py'],
     zip_safe=False,
     install_requires=['psutil'],
