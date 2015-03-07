@@ -12,7 +12,7 @@ setup(
     packages=['voltverine', 'voltverine.plugins', 'voltverine.actions'],
     scripts=['voltverine.py'],
     zip_safe=False,
-    install_requires=['psutil'],
+    install_requires=['psutil', 'PyYAML'],
     tests_require=['dbusmock'],
     test_suite='nose.collector',
 )
