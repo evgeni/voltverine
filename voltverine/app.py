@@ -42,6 +42,8 @@ class VoltverineApp(object):
         parser.add_argument('-a', '--all-plugins', action='store_true')
         parser.add_argument('--version', action='version', version='%(prog)s 0.1.0')
         self.args = parser.parse_args()
+        if not daemon:
+            self.args.daemonize = False
 
     def _parse_config(self):
         self.config = _DEFAULT_CONFIG
