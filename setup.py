@@ -13,6 +13,9 @@ setup(
     scripts=['voltverine.py'],
     zip_safe=False,
     install_requires=['psutil', 'PyYAML'],
+    extras_require={
+        'daemon mode': ['daemon'],
+    },
     tests_require=['dbusmock'],
     test_suite='nose.collector',
 )
