@@ -5,6 +5,11 @@ import os
 import sys
 import importlib
 import yaml
+import time
+try:
+    import daemon
+except ImportError:
+    daemon = False
 import voltverine.plugins
 import voltverine.actions
 
@@ -28,7 +33,8 @@ class VoltverineApp(object):
 
     def _parse_args(self):
         parser = argparse.ArgumentParser(description='maybe shutdown the machine')
-        parser.add_argument('-d', '--daemonize', action='store_true')
+        if daemon:
+            parser.add_argument('-d', '--daemonize', action='store_true')
         parser.add_argument('-f', '--foreground', action='store_true')
         parser.add_argument('-n', '--dry-run', action='store_true')
         parser.add_argument('-v', '--verbose', action='store_true')
@@ -95,14 +101,18 @@ class VoltverineApp(object):
             sys.exit(1)
 
     def run(self):
-        if self.args.daemonize:
-            # do something to run self._run() as a daemon
-            pass
+        if daemon and self.args.daemonize:
+            with daemon.DaemonContext():
+                self._run_in_loop()
         elif self.args.foreground:
-            # do something to run self._run() in a loop in foreground
-            pass
+            self._run_in_loop()
         else:
             self._run()
+
+    def _run_in_loop(self):
+        while True:
+            self._run()
+            time.sleep(10)
 
     def _run(self):
         results = {voltverine.plugins.NOT_OK: 0, voltverine.plugins.OK: 0, voltverine.plugins.DUNNO: 0}
