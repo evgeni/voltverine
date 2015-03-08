@@ -20,8 +20,14 @@ class TestLogind(dbusmock.DBusTestCase):
             self.p_mock.terminate()
             self.p_mock.wait()
 
-    def test_no_logind(self):
+    def test_no_logind_logindsessions(self):
         voltverine_plugin = voltverine.plugins.LogindSessions()
+        (action, info) = voltverine_plugin.analyze()
+        self.assertTrue(action == voltverine.plugins.DUNNO)
+        self.assertTrue(info == {})
+
+    def test_no_logind_logindinhibitors(self):
+        voltverine_plugin = voltverine.plugins.LogindInhibitors()
         (action, info) = voltverine_plugin.analyze()
         self.assertTrue(action == voltverine.plugins.DUNNO)
         self.assertTrue(info == {})
