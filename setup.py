@@ -14,7 +14,7 @@ setup(
     zip_safe=False,
     install_requires=['psutil', 'PyYAML'],
     extras_require={
-        'daemon mode': ['daemon'],
+        'daemon mode': ['python-daemon'],
     },
     tests_require=['dbusmock'],
     test_suite='nose.collector',
