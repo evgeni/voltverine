@@ -6,7 +6,7 @@ python:
 #  - "3.4"
 virtualenv:
   system_site_packages: true
-script: nosetests
+script: nosetests -v --with-coverage --cover-package=voltverine
 install:
   - pip install -r requirements.txt
   - pip install -r requirements-optional.txt
