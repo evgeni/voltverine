@@ -16,4 +16,4 @@ addons:
   - python-dbus
   - python3-dbus
   - python-gi
-  - pythn3-gi
+  - python3-gi
