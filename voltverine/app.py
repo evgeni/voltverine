@@ -8,7 +8,7 @@ import yaml
 import time
 try:
     import daemon
-except ImportError:
+except ImportError: # pragma: no cover
     daemon = False
 import voltverine.plugins
 import voltverine.actions
@@ -42,12 +42,12 @@ class VoltverineApp(object):
         parser.add_argument('-a', '--all-plugins', action='store_true')
         parser.add_argument('--version', action='version', version='%(prog)s 0.1.0')
         self.args = parser.parse_args()
-        if not daemon:
+        if not daemon: # pragma: no cover
             self.args.daemonize = False
 
     def _parse_config(self):
         self.config = _DEFAULT_CONFIG
-        if not self.args.config:
+        if not self.args.config: # pragma: no cover
             for f in ['voltverine.conf', os.path.expanduser('~/.config/voltverine/voltverine.conf'), '/etc/voltverine/voltverine.conf']:
                 if os.path.isfile(f) and os.access(f, os.R_OK):
                     self.args.config = f
@@ -76,7 +76,7 @@ class VoltverineApp(object):
                 configured_plugins = self.config['plugins'].keys()
             elif isinstance(self.config['plugins'], list):
                 configured_plugins = self.config['plugins']
-            else:
+            else: # pragma: no cover
                 configured_plugins = []
             for plugin in configured_plugins:
                 if hasattr(voltverine.plugins, plugin):
@@ -86,9 +86,9 @@ class VoltverineApp(object):
                         mod, cls = plugin.rsplit('.', 1)
                         plugin_module = importlib.import_module(mod)
                         self._plugins.append((plugin, getattr(plugin_module, cls)))
-                    except ImportError:
+                    except ImportError:  # pragma: no cover
                         logger.error("Could not import configured plugin %s", plugin)
-                else:
+                else: # pragma: no cover
                     logger.error("Could not find configured plugin %s", plugin)
         else:
             self._plugins = inspect.getmembers(voltverine.plugins,
@@ -98,7 +98,7 @@ class VoltverineApp(object):
     def _find_action(self):
         if hasattr(voltverine.actions, self.config['action']):
             self._action = getattr(voltverine.actions, self.config['action'])()
-        else:
+        else: # pragma: no cover
             logger.error("Could not find defined action %s, exiting", self.config['action'])
             sys.exit(1)
 
