@@ -36,6 +36,20 @@ class TestApp(dbusmock.DBusTestCase):
         v = voltverine.app.VoltverineApp()
         v.run()
 
+    def test_run_forbid_shutdown(self):
+        (self.p_mock, obj_logind) = self.spawn_server_template('logind', {}, stdout=subprocess.PIPE)
+        obj_logind.AddSession('c1', 'seat0', 500, 'joe', True)
+        sys.argv = ['voltverine']
+        v = voltverine.app.VoltverineApp()
+        v.run()
+
+    def test_run_forbid_shutdown_all_plugins(self):
+        (self.p_mock, obj_logind) = self.spawn_server_template('logind', {}, stdout=subprocess.PIPE)
+        obj_logind.AddSession('c1', 'seat0', 500, 'joe', True)
+        sys.argv = ['voltverine', '-a']
+        v = voltverine.app.VoltverineApp()
+        v.run()
+
     def test_verbose(self):
         (self.p_mock, obj_logind) = self.spawn_server_template('logind', {}, stdout=subprocess.PIPE)
         sys.argv = ['voltverine', '-v']
@@ -51,6 +65,14 @@ class TestApp(dbusmock.DBusTestCase):
         self.assertRegex(output, 'usage')
         self.assertRegex(output, 'voltverine')
         self.assertEquals(cm.exception.code, 0)
+
+    def test_no_valid_config(self):
+        (self.p_mock, obj_logind) = self.spawn_server_template('logind', {}, stdout=subprocess.PIPE)
+        with self.assertRaises(SystemExit) as cm:
+            sys.argv = ['voltverine', '-c', '/dev/null']
+            v = voltverine.app.VoltverineApp()
+            v.run()
+        self.assertEquals(cm.exception.code, 1)
 
     def test_config_plugins_dict(self):
         (self.p_mock, obj_logind) = self.spawn_server_template('logind', {}, stdout=subprocess.PIPE)
