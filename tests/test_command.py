@@ -38,6 +38,20 @@ class TestCommand(unittest.TestCase):
             self.assertTrue(action == voltverine.plugins.NOT_OK)
             self.assertTrue(info == {'retcode': 1})
 
+    def test_command_ok_list(self):
+        with mock.patch('subprocess.call', return_value=0):
+            voltverine_plugin = voltverine.plugins.Command(['/bin/true'])
+            (action, info) = voltverine_plugin.analyze()
+            self.assertTrue(action == voltverine.plugins.OK)
+            self.assertTrue(info == {'retcode': 0})
+
+    def test_command_notok_li(self):
+        with mock.patch('subprocess.call', return_value=1):
+            voltverine_plugin = voltverine.plugins.Command(['/bin/false'])
+            (action, info) = voltverine_plugin.analyze()
+            self.assertTrue(action == voltverine.plugins.NOT_OK)
+            self.assertTrue(info == {'retcode': 1})
+
 if __name__ == '__main__':
     # avoid writing to stderr
     unittest.main(testRunner=unittest.TextTestRunner(stream=sys.stdout, verbosity=2))
