@@ -9,3 +9,4 @@ from .processeswithconnections import ProcessesWithConnections
 from .noshutdownfile import NoShutdownFile
 from .command import Command
 from .time import Time
+from .uptime import Uptime
